@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Login from './views/Login.vue'
-import firebase from 'firebase'
+import store from './store'
 
 Vue.use(Router)
 
@@ -28,10 +28,9 @@ const router = new Router({
 })
 
 router.beforeEach((to, from, next) => {
-  const currUser = firebase.auth().currentUser
   const requiresAuth = to.matched.some(rec => rec.meta.requiresAuth)
 
-  if (requiresAuth && !currUser) {
+  if (requiresAuth && !store.getters.isLoggedIn) {
     next('/login')
   }
   else {

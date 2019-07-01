@@ -10,7 +10,7 @@
             <v-form>
               <v-layout>
                 <v-flex>
-                  <v-text-field v-model="mail" label="Mail" outline></v-text-field>
+                  <v-text-field v-model="uname" label="Username" outline></v-text-field>
                   <v-text-field v-model="password" label="Password" type="password" outline></v-text-field>
                 </v-flex>
               </v-layout>
@@ -18,7 +18,7 @@
           </v-card-text>
           <v-card-actions>
             <v-layout>
-              <v-btn color="success" @click="login">Login</v-btn>
+              <v-btn color="success" @click="login" :loading="loading" :disabled="loading">Login</v-btn>
             </v-layout>
           </v-card-actions>
         </v-card>
@@ -30,13 +30,17 @@
 export default {
   data() {
     return {
-      mail: "",
-      password: ""
+      uname: "",
+      password: "",
+      loading: false
     }
   },
   methods: {
-    login() {
-      this.$store.dispatch('connectUser', {mail: this.mail, password: this.password})
+    async login() {
+      this.loading = true
+      await this.$store.dispatch('connectUser', {uname: this.uname, password: this.password})
+
+      this.loading = false
     }
   }
 }

@@ -1,10 +1,5 @@
 <template>
   <v-container fluid>
-    <v-treeview :items="timers" :open-on-click="true" :open.sync="open">
-      <template v-slot:append="{item}">
-        <Timer :timer="item"/>
-      </template>
-    </v-treeview>
     <AddGroup/>
     <EditGroup/>
   </v-container>
