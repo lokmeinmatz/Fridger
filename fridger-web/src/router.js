@@ -13,24 +13,29 @@ const router = new Router({
     },
     {
       path: '/login',
-      name: 'login',
-      component: Login
+      name: 'Login',
+      component: Login,
+      meta: {
+        requiresNoAuth: true
+      }
     },
     {
       path: '/',
-      name: 'home',
-      component: () => import ('./views/Home.vue'),
-      meta: {
-        requiresAuth: true
-      }
-    }
+      name: 'Home',
+      component: () => import ('./views/Home.vue')
+    },
+    {
+      path: '/addFood',
+      name: 'Add Food',
+      component: () => import ('./views/AddFood.vue')
+    },
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some(rec => rec.meta.requiresAuth)
-
-  if (requiresAuth && !store.getters.isLoggedIn) {
+  const requiresAuth = !to.matched.some(rec => rec.meta.requiresNoAuth)
+  document.title = `FRIDGER ${to.name}`
+  if (requiresAuth && !store.state.loggedIn) {
     next('/login')
   }
   else {

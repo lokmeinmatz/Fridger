@@ -45,6 +45,9 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer;
     }
+  },
+  mounted() {
+    this.$store.dispatch('init')
   }
 };
 </script>

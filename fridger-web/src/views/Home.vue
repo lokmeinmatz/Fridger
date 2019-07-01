@@ -1,31 +1,29 @@
 <template>
   <v-container fluid>
-    <AddGroup/>
-    <EditGroup/>
+    <v-layout>
+      <v-flex xs-6>
+        <v-card class="rounded">
+          <v-btn flat round block color="primary" :to="'/addFood'">neuer Einkauf
+            <v-icon right>add_circle_outline</v-icon>
+          </v-btn>
+          <v-btn flat round block color="primary">Sachen verbraucht
+            <v-icon right>fastfood</v-icon>
+          </v-btn>
+        </v-card>
+      </v-flex>
+    </v-layout>
   </v-container>
 </template>
 
 <script>
-import Timer from '@/components/Timer.vue'
-import AddGroup from "@/components/AddGroup.vue"
-import EditGroup from "@/components/EditGroup.vue"
 
 export default {
   components: {
-    Timer,
-    AddGroup,
-    EditGroup
   },
   data() {
     return {
       open: []
     }
-  },
-  mounted() {
-    if (this.$store.state.timerGroups.length == 0) {
-      this.$store.dispatch("fetchGroups");
-    }
-    this.$store.commit('init')
   },
   computed: {
     timers() {
@@ -35,3 +33,15 @@ export default {
 };
 </script>
 
+
+<style scoped>
+.rounded {
+  border-radius: 20px;
+  display: flex;
+  padding: 5px;
+}
+
+.rounded .v-btn {
+  margin: 0;
+}
+</style>
