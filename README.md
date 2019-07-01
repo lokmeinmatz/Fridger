@@ -1,2 +1,2 @@
-# Fridger
-A tool that keeps track of food in your fridge
+# tiMe-web
+a web based timer app
