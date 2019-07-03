@@ -17,16 +17,18 @@
       </v-btn-toggle>
     </v-flex>
     <v-flex v-if="enterMode=='name'" xs-12 :messages="willGetCreatedMessage">
-      <v-autocomplete :label="'Enter Product Name'" v-model="name" :items="testNames"></v-autocomplete>
+      <v-autocomplete :label="'Enter Product Name'" v-model="name" :items="testNames" @input="updateBarcode()"></v-autocomplete>
+      <p> {{ barCode }}</p>
     </v-flex>
     <v-flex v-else-if="enterMode=='barcode'" xs-12>
-      <v-autocomplete :label="'Enter Product ID (barcode)'" v-model="barCode" :items="testCodes">
+      <v-autocomplete :label="'Enter Product ID (barcode)'" v-model="barCode" :items="testCodes" @input="updateName()">
         <template slot="append-outer">
           <v-btn icon @click="toggleScanner()">
             <v-icon>camera</v-icon>
           </v-btn>
         </template>
       </v-autocomplete>
+      <p> {{ name }}</p>
       <v-quagga
         v-if="showScanner"
         :onDetected="logIt"
@@ -51,6 +53,19 @@
         class="quagga-view"
       ></v-quagga>
     </v-flex>
+    <v-flex>
+      <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
+      <v-btn color="success" @click="addProduct">Produkt hinzufügen</v-btn>
+    </v-flex>
+
+    <v-snackbar
+      v-model="errorSnack.open"
+      :timeout="3000"
+      :top="true"
+      color="error"
+    >
+      <p class="centered">{{ errorSnack.msg }}</p>
+    </v-snackbar>
   </v-layout>
 </template>
 
@@ -60,6 +75,10 @@ export default {
   data() {
     return {
       enterMode: "barcode",
+      errorSnack: {
+        open: false,
+        msg: 'Bitte geb einen Namen an!'
+      },
       name: "",
       barCode: "",
       testNames: ["Joghurt Normal", "Käse Emmentaler", "Paprika Rot"],
@@ -71,6 +90,21 @@ export default {
   methods: {
     toggleScanner() {
       this.showScanner = !this.showScanner;
+    },
+    returnToHome() {
+      this.$router.go(-1)
+    },
+    addProduct() {
+      if(this.name.length < 3) {
+        this.errorSnack.open = true
+        return
+      }
+    },
+    updateBarcode() {
+      // TODO get barcode
+    },
+    updateName() {
+      this.$store.getters
     },
     logIt(data) {
       this.lastCodes.push(data.codeResult.code)
@@ -115,5 +149,11 @@ export default {
 .quagga-view {
   max-width: 100vw;
   max-height: calc(100vh - 200px);
+}
+
+.centered {
+  text-align: center;
+  width: 100%;
+  margin: 0 auto;
 }
 </style>

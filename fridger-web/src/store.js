@@ -3,10 +3,15 @@ import Vuex from 'vuex'
 import router from './router'
 import cookies from 'js-cookie'
 
+import knownProducts from './storeModules/knownProducts'
+
 Vue.use(Vuex)
 
 
 export default new Vuex.Store({
+  modules: {
+    knownProducts
+  },
   state: {
     loggedIn: false
   },
