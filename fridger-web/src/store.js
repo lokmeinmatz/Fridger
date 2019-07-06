@@ -28,6 +28,8 @@ export default new Vuex.Store({
         commit('setLoggedIn', true)
         router.push('/')
       }
+
+      commit('knownProducts/fillDemo')
     },
     connectUser({commit}, {uname, password}) {
 

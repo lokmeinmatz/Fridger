@@ -3,25 +3,37 @@
     <v-flex class="inline" :align-self-center="true" xs-12>
       <v-btn-toggle v-model="enterMode" mandatory>
         <v-btn color="primary" value="name" flat>
-          {{(enterMode == 'name' || $vuetify.breakpoint.width > 500) ? 'Enter by Name' : ''}}
-          <v-icon :right="enterMode=='name'">font_download</v-icon>
+          {{!collapsed('name') ? 'Enter by Name' : ''}}
+          <v-icon :right="!collapsed('name')">font_download</v-icon>
         </v-btn>
         <v-btn color="primary" value="barcode" flat>
-          {{(enterMode == 'barcode' || $vuetify.breakpoint.width > 500) ? 'Enter by BarCode' : ''}}
-          <v-icon :right="enterMode=='barcode'">scanner</v-icon>
+          {{!collapsed('barcode') ? 'Enter by BarCode' : ''}}
+          <v-icon :right="!collapsed('barcode')">scanner</v-icon>
         </v-btn>
         <v-btn color="green" value="create" flat>
-          {{(enterMode == 'create' || $vuetify.breakpoint.width > 500) ? 'Enter new Product' : ''}}
-          <v-icon :right="enterMode=='create'">add_circle</v-icon>
+          {{!collapsed('create') ? 'Enter new Product' : ''}}
+          <v-icon :right="!collapsed('create')">add_circle</v-icon>
         </v-btn>
       </v-btn-toggle>
     </v-flex>
-    <v-flex v-if="enterMode=='name'" xs-12 :messages="willGetCreatedMessage">
-      <v-autocomplete :label="'Enter Product Name'" v-model="name" :items="testNames" @input="updateBarcode()"></v-autocomplete>
+    <v-flex v-if="enterMode=='name'" xs-12>
+      <v-autocomplete 
+      :label="'Enter Product Name'" 
+      v-model="name" 
+      :items="knownProducts"
+      item-value="productName"
+      item-text="productName" 
+      @input="updateBarcode()"></v-autocomplete>
       <p> {{ barCode }}</p>
     </v-flex>
     <v-flex v-else-if="enterMode=='barcode'" xs-12>
-      <v-autocomplete :label="'Enter Product ID (barcode)'" v-model="barCode" :items="testCodes" @input="updateName()">
+      <v-autocomplete 
+      :label="'Enter Product ID (barcode)'" 
+      v-model="barCode" 
+      :items="knownProducts" 
+      item-value="barCode"
+      item-text="barCode" 
+      @input="updateName()">
         <template slot="append-outer">
           <v-btn icon @click="toggleScanner()">
             <v-icon>camera</v-icon>
@@ -55,7 +67,15 @@
     </v-flex>
     <v-flex>
       <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
-      <v-btn color="success" @click="addProduct">Produkt hinzufügen</v-btn>
+      <v-tooltip bottom>
+      <template v-slot:activator="{ on }">
+        <v-btn color="success" :disabled="productExists" @click="addProduct" v-on="productExists ? on : null">Produkt hinzufügen</v-btn>
+      </template>
+      <span>Das Produkt ist bereits bekannt.</span>
+    </v-tooltip>
+      <v-tooltip>
+
+      </v-tooltip>
     </v-flex>
 
     <v-snackbar
@@ -81,8 +101,8 @@ export default {
       },
       name: "",
       barCode: "",
-      testNames: ["Joghurt Normal", "Käse Emmentaler", "Paprika Rot"],
-      testCodes: ["12345", "54321", "32323"],
+      // replace testNames and testCodes with store data
+      // Autocomplete can get objects!!!
       showScanner: false,
       lastCodes: []
     };
@@ -100,11 +120,15 @@ export default {
         return
       }
     },
+    collapsed(name) {
+      return this.enterMode != name && this.$vuetify.breakpoint.width <= 700
+    },
     updateBarcode() {
       // TODO get barcode
+      this.barCode = this.$store.getters['knownProducts/getByName'](this.name).barCode
     },
     updateName() {
-      this.$store.getters
+      this.name = this.$store.getters['knownProducts/getByBarCode'](this.barCode).productName
     },
     logIt(data) {
       this.lastCodes.push(data.codeResult.code)
@@ -120,14 +144,15 @@ export default {
     }
   },
   computed: {
-    willGetCreatedMessage() {
-      const known =
-        this.testNames.includes(this.name) ||
-        this.testCodes.includes(this.barCode);
-      return known ? undefined : "Dieses Produkt wird neu erstellt.";
+    knownProducts() {
+      const r = this.$store.state.knownProducts.productList
+      return r
+    },
+    productExists() {
+      return this.$store.getters['knownProducts/getByName'](this.name) != undefined
     },
     readerSize() {
-      const s =  {
+      let s =  {
         width: Math.min(500, window.innerWidth),
         height: Math.min(500, window.innerHeight - 200)
       }
