@@ -25,7 +25,7 @@ export const knownProductsPaths = {
 }
 
 
-export const mod = {
+export const modKnownProducts = {
     namespaced: true,
     state: {
         productList: []

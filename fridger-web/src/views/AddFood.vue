@@ -71,11 +71,12 @@
     <v-flex xs12><h3>Haltbar bis {{ bestBeforeDisplay }}</h3></v-flex>
     
     <v-flex xs12 sm6>
-      <v-overflow-btn
+      <v-select
           :items="[0, 1, 2, 5, 10]"
           label="Schnelle Einstellung"
           @input="setBestBefore($event)"
-        ></v-overflow-btn>
+          :value="daysBB"
+        ></v-select>
     </v-flex>
     <v-flex xs12 sm6 align-self-center>
       <v-dialog v-model="datePicker" lazy width="290">
@@ -93,26 +94,20 @@
     </v-flex>
     <v-flex style="flex-direction: row;">
       <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
-      <v-tooltip v-if="enterMode=='create'" v-model="showProductExistsTooltip" bottom>
-        
-          <div @mouseover="maybeShowTooltip()" slot="activator"
-            @mouseleave="showProductExistsTooltip = false" class="modiv">
-          <v-btn
-            color="success"
-            :disabled="productExists"
-            @click="createProduct()"
-          >Produkt erstellen</v-btn>
-          </div>
-        
-        <span>Das Produkt ist bereits bekannt.</span>
-      </v-tooltip>
+      
+      <v-btn v-if="enterMode=='create'"
+        color="success"
+        @click="createProduct()"
+      >Produkt erstellen</v-btn>
+          
+      
       <v-btn v-else color="success" @click="addProduct()">Produkt hinzufügen</v-btn>
     </v-flex>
 
-    <v-snackbar v-model="errorSnack.open" :timeout="3000" :top="true" color="error">
+    <v-snackbar v-model="errorSnack.open" :timeout="3000" :top="true" color="error" multi-line>
       <p class="centered">{{ errorSnack.msg }}</p>
     </v-snackbar>
-    <v-snackbar v-model="successSnack.open" :timeout="3000" :top="true" color="success">
+    <v-snackbar v-model="successSnack.open" :timeout="3000" :top="true" color="success" multi-line>
       <p class="centered">{{ successSnack.msg }}</p>
     </v-snackbar>
   </v-layout>
@@ -120,7 +115,8 @@
 
 <script>
 import { knownProductsPaths } from "../storeModules/knownProducts";
-import { ProductTemplate } from '../classes/Products';
+import { storedProductsPaths } from '../storeModules/storedProducts'
+import { ProductTemplate, ProductInstance } from '../classes/Products';
 export default {
   components: {},
   data() {
@@ -161,7 +157,6 @@ export default {
       this.bestBefore = bb
     },
     maybeShowTooltip() {
-      console.log('ssss')
       if (this.productExists) {this.showProductExistsTooltip = true}
     },
     toggleScanner() {
@@ -171,13 +166,27 @@ export default {
       this.$router.go(-1);
     },
     addProduct() {
-      if (this.name.length < 3) {
+      if (!this.productExists) {
+        this.errorSnack.msg = 'Dieses Produkt ist uns unbekannt. Füge ein neues Produkt hinzu.'
         this.errorSnack.open = true;
         return;
       }
+
+      // get template
+      let template = this.$store.getters[knownProductsPaths.getters.G_GET_BY_NAME](this.name) 
+
+      if(template == undefined || template.barCode != this.barCode) {
+        this.errorSnack.msg = 'Dieses ProductTemplate konnte nicht gefunden werden.'
+        this.errorSnack.open = true
+        return
+      }
+
+      const prod = new ProductInstance(template, this.$store.getters[storedProductsPaths.getters.G_GET_NEXT_IID], this.bestBeforeISO)
+
     },
     createProduct() {
       if (this.name.length < 3 || this.productExists) {
+        this.errorSnack.msg = (this.productExists) ? 'Dieses Produkt existiert bereits.' : 'Der Name muss min. 3 Buchstaben lang sein!'
         this.errorSnack.open = true;
         return;
       }
@@ -187,6 +196,7 @@ export default {
       .then(() => {
         this.successSnack.msg = 'Neues Produkt in Datenbank erstellt.'
         this.successSnack.open = true
+        addProduct()
         this.reset()
       })
       .catch(() => {
@@ -241,7 +251,7 @@ export default {
       /**@type Date */
       const d = this.bestBefore
 
-      return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()} | in ${Math.ceil((this.bestBefore.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} Tagen`
+      return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()} | in ${this.daysBB} Tagen`
     },
     knownProducts() {
       const r = this.$store.state.knownProducts.productList;
@@ -258,8 +268,10 @@ export default {
         width: Math.min(500, window.innerWidth),
         height: Math.min(500, window.innerHeight - 200)
       };
-      console.log(s);
       return s;
+    },
+    daysBB() {
+      return Math.ceil((this.bestBefore.getTime() - Date.now()) / (1000 * 60 * 60 * 24))
     }
   }
 };

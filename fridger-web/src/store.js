@@ -3,14 +3,16 @@ import Vuex from 'vuex'
 import router from './router'
 import cookies from 'js-cookie'
 
-import {mod, knownProductsPaths} from './storeModules/knownProducts'
+import {modKnownProducts, knownProductsPaths} from './storeModules/knownProducts'
+import {modStoredProducts} from './storeModules/storedProducts'
 
 Vue.use(Vuex)
 
 
 export default new Vuex.Store({
   modules: {
-    knownProducts: mod
+    knownProducts: modKnownProducts,
+    storedProducts: modStoredProducts
   },
   state: {
     loggedIn: false
