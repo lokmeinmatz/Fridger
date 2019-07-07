@@ -3,10 +3,10 @@
     <v-layout>
       <v-flex xs-6>
         <v-card class="rounded">
-          <v-btn flat round block color="primary" :to="'/addFood'">neuer Einkauf
+          <v-btn flat round block color="primary" class="top" :to="'/addFood'">neuer Einkauf
             <v-icon right>add_circle_outline</v-icon>
           </v-btn>
-          <v-btn flat round block color="primary">Sachen verbraucht
+          <v-btn flat round block color="primary" class="bottom">Sachen verbraucht
             <v-icon right>fastfood</v-icon>
           </v-btn>
         </v-card>
@@ -43,5 +43,19 @@ export default {
 
 .rounded .v-btn {
   margin: 0;
+  padding: 5px;
 }
+
+@media only screen and (max-width: 600px) {
+  .rounded {
+    flex-direction: column;
+  }
+  .rounded .v-btn.top {
+    margin-bottom: 3px;
+  }
+  .rounded .v-btn.bottom {
+    margin-top: 3px;
+  }
+}
+
 </style>

@@ -1,6 +1,6 @@
 <template>
-  <v-layout column>
-    <v-flex class="inline" :align-self-center="true" xs-12>
+  <v-layout row wrap>
+    <v-flex class="inline" :align-self-center="true" xs12>
       <v-btn-toggle v-model="enterMode" mandatory>
         <v-btn color="primary" value="name" flat>
           {{!collapsed('name') ? 'Enter by Name' : ''}}
@@ -16,7 +16,7 @@
         </v-btn>
       </v-btn-toggle>
     </v-flex>
-    <v-flex v-if="enterMode=='name'" xs-12>
+    <v-flex v-if="enterMode=='name'" xs12>
       <v-autocomplete
         :label="'Enter Product Name'"
         v-model="name"
@@ -27,7 +27,7 @@
       ></v-autocomplete>
       <p>{{ barCode }}</p>
     </v-flex>
-    <v-flex v-else-if="enterMode=='barcode'" xs-12>
+    <v-flex v-else-if="enterMode=='barcode'" xs12>
       <v-autocomplete
         :label="'Enter Product ID (barcode)'"
         v-model="barCode"
@@ -50,7 +50,7 @@
         :readerTypes="['ean_reader']"
       ></v-quagga>
     </v-flex>
-    <v-flex v-else xs-12>
+    <v-flex v-else xs12>
       <v-text-field :label="'Enter new Name'" v-model="name"></v-text-field>
       <v-text-field :label="'Enter Product ID (barcode)'" v-model="barCode">
         <template slot="append-outer">
@@ -67,12 +67,29 @@
         class="quagga-view"
       ></v-quagga>
     </v-flex>
-    <v-flex>
-      <!-- set best before -->
-      <v-date-picker v-model="bestBeforeISO">
-
-      </v-date-picker>
-      <p>{{ bestBeforeDisplay }}</p>
+    <!-- set best before -->
+    <v-flex xs12><h3>Haltbar bis {{ bestBeforeDisplay }}</h3></v-flex>
+    
+    <v-flex xs12 sm6>
+      <v-overflow-btn
+          :items="[0, 1, 2, 5, 10]"
+          label="Schnelle Einstellung"
+          @input="setBestBefore($event)"
+        ></v-overflow-btn>
+    </v-flex>
+    <v-flex xs12 sm6 align-self-center>
+      <v-dialog v-model="datePicker" lazy width="290">
+        <template v-slot:activator="{on}">
+          <v-btn
+            color="orange lighten-2"
+            dark
+            v-on="on"
+          >
+            Datum eingeben
+        </v-btn>
+        </template>
+        <v-date-picker @input="datePicker=false" v-model="bestBeforeISO" first-day-of-week="1" :min="new Date().toISOString().substr(0, 10)"></v-date-picker>
+      </v-dialog>
     </v-flex>
     <v-flex style="flex-direction: row;">
       <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
@@ -104,13 +121,13 @@
 <script>
 import { knownProductsPaths } from "../storeModules/knownProducts";
 import { ProductTemplate } from '../classes/Products';
-
 export default {
   components: {},
   data() {
     return {
       enterMode: "barcode",
       bestBefore: new Date(),
+      datePicker: false,
       errorSnack: {
         open: false,
         msg: "Bitte geb einen Namen an!"
@@ -134,7 +151,14 @@ export default {
       this.name = ''
       this.barCode = ''
       this.showScanner = false
+      this.bestBefore = new Date()
       this.lastCodes = []
+    },
+    setBestBefore(days) {
+      /**@type Date */
+      let bb = new Date()
+      bb.setDate(bb.getDate() + days) // auto overflow
+      this.bestBefore = bb
     },
     maybeShowTooltip() {
       console.log('ssss')

@@ -1,5 +1,7 @@
 Website:
   AddFood:
-    ☐ Add BestBefore / Haltbar bis
+    ☐ Add BestBefore / Haltbar bis @started(19-07-07 21:45)
+      ☐ Save in Data Model
+      ☐ Reset Quick Picker if Calendar was used
     ☐ Check BarCode with regex
     ☐ ?Add Optional Usage Warning (for fresh food)
