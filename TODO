@@ -1,0 +1,5 @@
+Website:
+  AddFood:
+    ☐ Add BestBefore / Haltbar bis
+    ☐ Check BarCode with regex
+    ☐ ?Add Optional Usage Warning (for fresh food)

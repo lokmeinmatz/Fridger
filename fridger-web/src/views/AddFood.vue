@@ -67,11 +67,18 @@
         class="quagga-view"
       ></v-quagga>
     </v-flex>
+    <v-flex>
+      <!-- set best before -->
+      <v-date-picker v-model="bestBeforeISO">
+
+      </v-date-picker>
+      <p>{{ bestBeforeDisplay }}</p>
+    </v-flex>
     <v-flex style="flex-direction: row;">
       <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
       <v-tooltip v-if="enterMode=='create'" v-model="showProductExistsTooltip" bottom>
-        <template v-slot:activator="{on}">
-          <div @mouseover="maybeShowTooltip()"
+        
+          <div @mouseover="maybeShowTooltip()" slot="activator"
             @mouseleave="showProductExistsTooltip = false" class="modiv">
           <v-btn
             color="success"
@@ -79,7 +86,7 @@
             @click="createProduct()"
           >Produkt erstellen</v-btn>
           </div>
-        </template>
+        
         <span>Das Produkt ist bereits bekannt.</span>
       </v-tooltip>
       <v-btn v-else color="success" @click="addProduct()">Produkt hinzufügen</v-btn>
@@ -103,6 +110,7 @@ export default {
   data() {
     return {
       enterMode: "barcode",
+      bestBefore: new Date(),
       errorSnack: {
         open: false,
         msg: "Bitte geb einen Namen an!"
@@ -151,7 +159,7 @@ export default {
       }
 
       let prod = new ProductTemplate(this.name, this.barCode)
-      this.$store.dispatch(knownProductsPaths.actions.G_ADD_NEW_FOOD. prod)
+      this.$store.dispatch(knownProductsPaths.actions.G_ADD_NEW_FOOD, prod)
       .then(() => {
         this.successSnack.msg = 'Neues Produkt in Datenbank erstellt.'
         this.successSnack.open = true
@@ -197,6 +205,20 @@ export default {
     }
   },
   computed: {
+    bestBeforeISO: {
+      get() {
+        return this.bestBefore.toISOString().substr(0, 10)
+      },
+      set(v) {
+        this.bestBefore = new Date(v)
+      }
+    },
+    bestBeforeDisplay() {
+      /**@type Date */
+      const d = this.bestBefore
+
+      return `${d.getDate()}.${d.getMonth() + 1}.${d.getFullYear()} | in ${Math.ceil((this.bestBefore.getTime() - Date.now()) / (1000 * 60 * 60 * 24))} Tagen`
+    },
     knownProducts() {
       const r = this.$store.state.knownProducts.productList;
       return r;
