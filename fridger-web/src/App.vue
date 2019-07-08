@@ -37,7 +37,7 @@ export default {
       nav: [
         { title: "Home", path: "/" },
         { title: "Stored Food", path: "/storage" },
-        { title: "Known Food List", path: "/allknownfoods" }
+        { title: "Known Food List", path: "/productTemplates" }
       ]
     };
   },

@@ -28,7 +28,6 @@ export default new Vuex.Store({
     init({commit}) {
       if(cookies.get('fridger-id') != undefined) {
         commit('setLoggedIn', true)
-        router.push('/')
       }
 
       commit(knownProductsPaths.mutations.G_FILL_DEMO)
@@ -38,7 +37,7 @@ export default new Vuex.Store({
       return new Promise((resolve, reject) => {
         // simulate login
         setTimeout(() => {
-          cookies.set('fridger-id', '123')
+          cookies.set('fridger-id', '123', {expires: Date.now() + 1000 * 3600})
           commit('setLoggedIn', true)
           router.push('/')
           resolve()

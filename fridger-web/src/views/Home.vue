@@ -3,7 +3,7 @@
     <v-layout>
       <v-flex xs-6>
         <v-card class="rounded">
-          <v-btn flat round block color="primary" class="top" :to="'/addFood'">neuer Einkauf
+          <v-btn flat round block color="primary" class="top" :to="'/addFood?enter_mode=barcode'">neuer Einkauf
             <v-icon right>add_circle_outline</v-icon>
           </v-btn>
           <v-btn flat round block color="primary" class="bottom">Sachen verbraucht

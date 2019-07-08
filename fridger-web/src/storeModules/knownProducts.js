@@ -44,6 +44,7 @@ export const modKnownProducts = {
     mutations: {
         // fillDemo
         [knownProductsPaths.mutations.FILL_DEMO](state) {
+            state.productList = []
             state.productList.push(new ProductTemplate('Müsli Vitali Feinherb',  '000001'))
             state.productList.push(new ProductTemplate('Müsli Vitali Vollmilch', '000002'))
         },

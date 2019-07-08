@@ -119,9 +119,9 @@ import { storedProductsPaths } from '../storeModules/storedProducts'
 import { ProductTemplate, ProductInstance } from '../classes/Products';
 export default {
   components: {},
+  props: ['enter_mode'],
   data() {
     return {
-      enterMode: "barcode",
       bestBefore: new Date(),
       datePicker: false,
       errorSnack: {
@@ -183,6 +183,15 @@ export default {
 
       const prod = new ProductInstance(template, this.$store.getters[storedProductsPaths.getters.G_GET_NEXT_IID], this.bestBeforeISO)
 
+      this.$store.dispatch(storedProductsPaths.actions.G_ADD_NEW_FOOD, prod)
+      .then(() => {
+        this.successSnack.msg = 'Produkt hinzugefügt'
+        this.successSnack.open = true
+        this.reset()
+      }).catch(() => {
+        this.errorSnack.msg = 'Produkt konnte nicht hinzugefügt werden.'
+        this.errorSnack.open = true
+      })
     },
     createProduct() {
       if (this.name.length < 3 || this.productExists) {
@@ -197,7 +206,6 @@ export default {
         this.successSnack.msg = 'Neues Produkt in Datenbank erstellt.'
         this.successSnack.open = true
         addProduct()
-        this.reset()
       })
       .catch(() => {
         // TODO error
@@ -239,6 +247,14 @@ export default {
     }
   },
   computed: {
+    enterMode: {
+      get() {
+        return this.enter_mode
+      },
+      set(v) {
+        this.$router.replace({path: '/addFood', query: {enter_mode: v} })
+      }
+    },
     bestBeforeISO: {
       get() {
         return this.bestBefore.toISOString().substr(0, 10)
