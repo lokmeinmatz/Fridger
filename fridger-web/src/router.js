@@ -26,14 +26,19 @@ const router = new Router({
     },
     {
       path: '/addFood',
-      name: 'Add Food',
+      name: 'Produkte hinzufügen',
       component: () => import ('./views/AddFood.vue'),
       props: (route) => ({ enter_mode: route.query.enter_mode })
     },
     {
       path: '/productTemplates',
-      name: 'Known Products',
+      name: 'Bekannte Produkte',
       component: () => import ('./views/KnownFood.vue')
+    },
+    {
+      path: '/storedProducts',
+      name: 'Vorhandene Produkte',
+      component: () => import ('./views/StoredFood.vue')
     }
   ]
 })

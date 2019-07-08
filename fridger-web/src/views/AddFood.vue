@@ -92,6 +92,9 @@
         <v-date-picker @input="datePicker=false" v-model="bestBeforeISO" first-day-of-week="1" :min="new Date().toISOString().substr(0, 10)"></v-date-picker>
       </v-dialog>
     </v-flex>
+    <v-flex xs12>
+      <v-switch v-model="allreadyOpen" label="bereits geöffnet?"></v-switch>
+    </v-flex>
     <v-flex style="flex-direction: row;">
       <v-btn color="error" @click="returnToHome()">zurück zur Übersicht</v-btn>
       
@@ -117,6 +120,7 @@
 import { knownProductsPaths } from "../storeModules/knownProducts";
 import { storedProductsPaths } from '../storeModules/storedProducts'
 import { ProductTemplate, ProductInstance } from '../classes/Products';
+
 export default {
   components: {},
   props: ['enter_mode'],
@@ -124,6 +128,7 @@ export default {
     return {
       bestBefore: new Date(),
       datePicker: false,
+      allreadyOpen: false,
       errorSnack: {
         open: false,
         msg: "Bitte geb einen Namen an!"
@@ -181,7 +186,13 @@ export default {
         return
       }
 
-      const prod = new ProductInstance(template, this.$store.getters[storedProductsPaths.getters.G_GET_NEXT_IID], this.bestBeforeISO)
+      const prod = new ProductInstance(
+        template, 
+        this.$store.getters[storedProductsPaths.getters.G_GET_NEXT_IID], 
+        this.bestBeforeISO, 
+        this.allreadyOpen ? new Date().toISOString().substr(0, 10) : undefined
+      )
+      
 
       this.$store.dispatch(storedProductsPaths.actions.G_ADD_NEW_FOOD, prod)
       .then(() => {
@@ -205,7 +216,7 @@ export default {
       .then(() => {
         this.successSnack.msg = 'Neues Produkt in Datenbank erstellt.'
         this.successSnack.open = true
-        addProduct()
+        this.addProduct()
       })
       .catch(() => {
         // TODO error

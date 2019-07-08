@@ -10,7 +10,7 @@
     </v-toolbar>
 
     <v-content>
-      <v-container fluid>
+      <v-container>
         <router-view></router-view>
       </v-container>
     </v-content>
@@ -36,7 +36,7 @@ export default {
       drawer: false,
       nav: [
         { title: "Home", path: "/" },
-        { title: "Stored Food", path: "/storage" },
+        { title: "Stored Food", path: "/storedProducts" },
         { title: "Known Food List", path: "/productTemplates" }
       ]
     };
@@ -45,9 +45,6 @@ export default {
     toggleDrawer() {
       this.drawer = !this.drawer;
     }
-  },
-  mounted() {
-    this.$store.dispatch('init')
   }
 };
 </script>

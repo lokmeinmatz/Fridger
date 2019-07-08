@@ -1,5 +1,7 @@
 import {ProductTemplate} from '../classes/Products'
 
+import { checkModules } from './storeUtils'
+
 export const knownProductsPaths = {
     mutations: {
         FILL_DEMO: 'fillDemo',
@@ -65,3 +67,5 @@ export const modKnownProducts = {
         }
     }
 }
+
+checkModules(knownProductsPaths, modKnownProducts)

@@ -4,7 +4,11 @@ Website:
       ✔ Save in Data Model @started(19-07-08 11:07) @done(19-07-08 11:15) @lasted(8m51s)
       ✔ Reset Quick Picker if Calendar was used @started(19-07-07 22:44) @done(19-07-08 11:05) @lasted(12h21m11s)
     ☐ Check BarCode with regex
+    ✔ Food allready open? @started(19-07-08 17:44) @done(19-07-08 18:33) @lasted(49m13s)
     ☐ ?Add Optional Usage Warning (for fresh food)
   KnownFoodList:
-    ☐ Display List @started(19-07-08 11:17)
+    ✔ Display List @started(19-07-08 17:43) @done(19-07-08 17:43) @lasted(1s)
     ☐ Enable Editable / Deletable
+  StoredFoodList:
+    ✔ Display Food @started(19-07-08 18:33) @done(19-07-08 18:33) @lasted(21s)
+    ☐ highlight Expired / about to expire @started(19-07-08 18:33)
